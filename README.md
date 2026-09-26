@@ -1,4 +1,4 @@
-# SpaceGuard 🛰️
+# SpaceGuard 
 
 Real-time space weather monitoring dashboard — built for the Nexus Global Talent internship.
 
