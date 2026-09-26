@@ -23,7 +23,7 @@ from src.viz.charts import (
 
 st.set_page_config(
     page_title="SpaceGuard — Space Weather Monitor",
-    page_icon="🛰️",
+    page_icon="",
     layout="wide",
 )
 
@@ -86,7 +86,7 @@ def main() -> None:
                 "This is a monitoring/visualization prototype, not an official forecasting service."
             )
 
-    st.title("🛰️ SpaceGuard")
+    st.title("SpaceGuard")
     st.caption("Real-time space weather monitoring — solar flares, CMEs, and geomagnetic activity.")
 
     # --- Fetch, clean, cache (with graceful fallback on API failure) ---
