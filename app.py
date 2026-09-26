@@ -23,7 +23,7 @@ from src.viz.charts import (
 
 st.set_page_config(
     page_title="SpaceGuard — Space Weather Monitor",
-    page_icon="",
+    page_icon="🛰️",
     layout="wide",
 )
 
@@ -35,6 +35,24 @@ DARK_CSS = """
 .risk-badge { display:inline-block; padding:0.4rem 1.2rem; border-radius:999px; font-weight:700; font-size:1.1rem; color:white; }
 .last-updated { color:#9a9a9a; font-size:0.85rem; }
 .methodology { color:#c9c9c9; }
+
+/* --- Mobile responsiveness fixes --- */
+@media (max-width: 640px) {
+    /* Stack side-by-side columns vertically on small screens */
+    div[data-testid="stHorizontalBlock"] {
+        flex-direction: column !important;
+    }
+    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+        width: 100% !important;
+        flex: 1 1 100% !important;
+        min-width: 100% !important;
+    }
+    /* Shrink title and tighten spacing */
+    h1 { font-size: 1.6rem !important; }
+    .risk-badge { font-size: 0.95rem !important; padding: 0.35rem 0.9rem !important; }
+    /* Let Plotly charts and tables scroll horizontally instead of overflowing */
+    .stPlotlyChart, .stDataFrame { overflow-x: auto !important; }
+}
 </style>
 """
 
@@ -68,7 +86,7 @@ def main() -> None:
                 "This is a monitoring/visualization prototype, not an official forecasting service."
             )
 
-    st.title("SpaceGuard")
+    st.title("🛰️ SpaceGuard")
     st.caption("Real-time space weather monitoring — solar flares, CMEs, and geomagnetic activity.")
 
     # --- Fetch, clean, cache (with graceful fallback on API failure) ---
