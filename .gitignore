@@ -1,0 +1,18 @@
+# Environment / secrets
+.env
+.streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# Local data
+spaceguard.db
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
