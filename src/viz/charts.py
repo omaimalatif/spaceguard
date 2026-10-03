@@ -27,7 +27,10 @@ def build_flare_class_chart(flares: pd.DataFrame, theme: str = "dark") -> go.Fig
     if flares.empty or "flareClassLetter" not in flares.columns:
         return go.Figure().update_layout(title="Solar flare class distribution: no data", template=_template(theme))
 
-    counts = flares["flareClassLetter"].value_counts().reindex(["A", "B", "C", "M", "X"]).fillna(0).reset_index()
+    order = ["A", "B", "C", "M", "X"]
+    if (flares["flareClassLetter"] == "?").any():
+        order.append("?")  # keep unparsable classes visible so chart total == metric total
+    counts = flares["flareClassLetter"].value_counts().reindex(order).fillna(0).reset_index()
     counts.columns = ["Class", "Count"]
     fig = px.bar(
         counts, x="Class", y="Count", title="Solar flares by class (severity)",

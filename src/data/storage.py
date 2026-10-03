@@ -4,6 +4,7 @@ to show trends from, and something to fall back on if the live API call fails.
 """
 
 import sqlite3
+from io import StringIO
 from pathlib import Path
 
 import pandas as pd
@@ -46,4 +47,4 @@ def load_events(event_type: str) -> pd.DataFrame:
         ).fetchone()
     if row is None:
         return pd.DataFrame()
-    return pd.read_json(row[0], orient="records")
+    return pd.read_json(StringIO(row[0]), orient="records")

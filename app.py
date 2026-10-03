@@ -57,6 +57,18 @@ DARK_CSS = """
 """
 
 
+@st.cache_data(ttl=900, show_spinner="Fetching NASA DONKI data...")
+def fetch_clean_events(start_date: str, end_date: str):
+    """Fetch + clean all three feeds. Cached 15 min per window so slider/tab
+    interactions don't re-hit the API (DONKI rate-limits, esp. DEMO_KEY).
+    Exceptions are not cached, so a failed call is retried on the next run."""
+    return (
+        clean_flares(get_solar_flares(start_date, end_date)),
+        clean_cmes(get_cme_events(start_date, end_date)),
+        clean_storms(get_geomagnetic_storms(start_date, end_date)),
+    )
+
+
 def render_risk_badge(level: str) -> None:
     color = RISK_COLORS.get(level, RISK_COLORS["Unknown"])
     st.markdown(
@@ -91,9 +103,7 @@ def main() -> None:
 
     # --- Fetch, clean, cache (with graceful fallback on API failure) ---
     try:
-        flares = clean_flares(get_solar_flares(start_date, end_date))
-        cmes = clean_cmes(get_cme_events(start_date, end_date))
-        storms = clean_storms(get_geomagnetic_storms(start_date, end_date))
+        flares, cmes, storms = fetch_clean_events(start_date, end_date)
         save_events(flares, "flare")
         save_events(cmes, "cme")
         save_events(storms, "storm")
@@ -103,9 +113,14 @@ def main() -> None:
         flares = load_events("flare")
         cmes = load_events("cme")
         storms = load_events("storm")
-        data_source_note = "cached"
+        data_source_note = "cached (last successful fetch; may not match the selected window)"
 
-    risk_level = compute_risk_level(flares, cmes, storms)
+    no_data = flares.empty and cmes.empty and storms.empty
+    if data_source_note != "live" and no_data:
+        # API failed AND nothing cached: don't claim "Low" on zero information.
+        risk_level = "Unknown"
+    else:
+        risk_level = compute_risk_level(flares, cmes, storms)
     theme = "dark"
 
     col1, col2 = st.columns([1, 3])
